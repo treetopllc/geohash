@@ -20,6 +20,8 @@
 
 -export([decode/1, decode_bbox/1, encode/3, neighbor/2, neighbors/1, expand/1]).
 
+-on_load(init/0).
+
 %% @doc Decode a geohash in to latitude and longitude
 -spec decode(binary()) -> {float(), float()}.
 decode(_GeoHash) ->
@@ -57,3 +59,24 @@ neighbors(C) ->
 -spec expand(binary()) -> [binary()].
 expand(C) ->
     [C | neighbors(C)].
+
+%% @private
+init() ->
+    SoName = case code:priv_dir(?MODULE) of
+    {error, bad_name} ->
+        case filelib:is_dir(filename:join(["..", "priv"])) of
+        true ->
+            filename:join(["..", "priv", "geohash_nif"]);
+        false ->
+            filename:join(["priv", "geohash_nif"])
+        end;
+    Dir ->
+        filename:join(Dir, "geohash_nif")
+    end,
+    (catch erlang:load_nif(SoName, 0)),
+    case erlang:system_info(otp_release) of
+    "R13B03" -> true;
+    _ -> ok
+    end.
+
+
