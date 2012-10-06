@@ -22,6 +22,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -210,12 +211,16 @@ erl_geohash_decode_bbox(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     len = min(input.size, GEOHASH_MAX);
     strncpy(geohash, (char*)input.data, len);
-    geohash[len-1] = 0;
+    geohash[len-1] = '\0';
 
     geohash_decode_bbox(geohash, lat, lon);
 
-    ERL_NIF_TERM latrange = enif_make_tuple2(env, lat[0], lat[1]);
-    ERL_NIF_TERM lonrange = enif_make_tuple2(env, lon[0], lon[1]);
+    ERL_NIF_TERM latrange = enif_make_tuple2(env,
+            enif_make_double(env, lat[0]),
+            enif_make_double(env, lat[1]));
+    ERL_NIF_TERM lonrange = enif_make_tuple2(env,
+            enif_make_double(env, lon[0]),
+            enif_make_double(env, lon[1]));
     ERL_NIF_TERM bbox = enif_make_tuple2(env, latrange, lonrange);
 
     return make_ok(env, bbox);
@@ -238,11 +243,14 @@ erl_geohash_decode(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     len = min(input.size, GEOHASH_MAX);
     strncpy(geohash, (char*)input.data, len);
-    geohash[len-1] = 0;
-
+    geohash[len-1] = '\0';
     geohash_decode(geohash, point);
 
-    return make_ok(env, enif_make_tuple2(env, point[0], point[1]));
+    ERL_NIF_TERM point_tuple = enif_make_tuple2(env,
+            enif_make_double(env, point[0]),
+            enif_make_double(env, point[1]));
+
+    return make_ok(env, point_tuple);
 }
 
 /**
