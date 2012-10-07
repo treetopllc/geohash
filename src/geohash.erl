@@ -38,8 +38,8 @@ encode(_Latitude, _Longitude, _Precision) ->
     exit(geohash_nif_not_loaded).
 
 %% @doc Calculate a neighoring geohash
--spec neighbor(binary(), u | d | l | r) -> binary().
-neighbor(GeoHash, Direction) ->
+-spec neighbor(binary(), n | s | w | e) -> binary().
+neighbor(_GeoHash, _Direction) ->
     exit(geohash_nif_not_loaded).
 
 %% @doc Calculate 8 neighboring geohashes

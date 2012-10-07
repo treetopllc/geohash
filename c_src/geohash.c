@@ -42,7 +42,6 @@
 static void
 geohash_decode_bbox(char *geohash, double *lat, double *lon)
 {
-
     static char bits[] = {16,8,4,2,1};
 
     int i, j, hashlen;
@@ -133,7 +132,7 @@ geohash_encode(double latitude, double longitude, int precision, char *geohash)
  * Calculate a neighbor to a geohash of the same precision
  */
 void 
-geohash_neighbor(char *str, int dir, int hashlen)
+geohash_neighbor(char *str, int dir, int hashlen, char *outstr)
 {
     /* Right, Left, Top, Bottom */
     /*     0,    1,   2,      3 */
@@ -157,8 +156,8 @@ geohash_neighbor(char *str, int dir, int hashlen)
     border = borders[index];
     last_chr = str[hashlen-1];
     if (strchr(border,last_chr))
-        geohash_neighbor(str, dir, hashlen-1);
-    str[hashlen-1] = BASE32[strchr(neighbor, last_chr)-neighbor];
+        geohash_neighbor(str, dir, hashlen-1, outstr);
+    outstr[hashlen-1] = BASE32[strchr(neighbor, last_chr)-neighbor];
 }
 
 /**
@@ -291,7 +290,60 @@ erl_geohash_encode(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 ERL_NIF_TERM
 erl_geohash_neighbor(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    return make_ok(env, 0);
+    ErlNifBinary input, output;
+    char geohash[GEOHASH_MAX];
+    char dir[2];
+    size_t hash_len;
+    unsigned int dir_len;
+    int dir_val;
+
+    if(!enif_inspect_binary(env, argv[0], &input))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if(!enif_get_atom_length(env, argv[1], &dir_len, ERL_NIF_LATIN1))
+    {
+        return enif_make_badarg(env);
+    }
+
+    if(dir_len > sizeof(dir)) {
+        return enif_make_badarg(env);
+    }
+
+    if(!enif_get_atom(env, argv[1], dir, sizeof(dir), ERL_NIF_LATIN1))
+    {
+        return enif_make_badarg(env);
+    }
+
+    hash_len = min(input.size, GEOHASH_MAX);
+    strncpy(geohash, (char*)input.data, hash_len);
+    geohash[hash_len-1] = '\0';
+
+    switch (dir[0]) {
+        case 'w':
+            dir_val = 0;
+            break;
+        case 'e':
+            dir_val = 1;
+            break;
+        case 'n':
+            dir_val = 2;
+            break;
+        case 's':
+            dir_val = 3;
+            break;
+        default:
+            return enif_make_badarg(env);
+    }
+
+    if(!enif_alloc_binary(hash_len, &output)) {
+        return make_error(env, "alloc_error");
+    }
+
+    geohash_neighbor(geohash, dir_val, hash_len, (char *) output.data);
+
+    return make_ok(env, enif_make_binary(env, &output));
 }
 
 
