@@ -132,7 +132,7 @@ geohash_encode(double latitude, double longitude, int precision, char *geohash)
  * Calculate a neighbor to a geohash of the same precision
  */
 void 
-geohash_neighbor(char *str, int dir, int hashlen, char *outstr)
+geohash_neighbor(char *str, int dir, int hashlen)
 {
     /* Right, Left, Top, Bottom */
     /*     0,    1,   2,      3 */
@@ -156,8 +156,8 @@ geohash_neighbor(char *str, int dir, int hashlen, char *outstr)
     border = borders[index];
     last_chr = str[hashlen-1];
     if (strchr(border,last_chr))
-        geohash_neighbor(str, dir, hashlen-1, outstr);
-    outstr[hashlen-1] = BASE32[strchr(neighbor, last_chr)-neighbor];
+        geohash_neighbor(str, dir, hashlen-1);
+    str[hashlen-1] = BASE32[strchr(neighbor, last_chr)-neighbor];
 }
 
 /**
@@ -318,7 +318,7 @@ erl_geohash_neighbor(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     hash_len = min(input.size, GEOHASH_MAX);
     strncpy(geohash, (char*)input.data, hash_len);
-    geohash[hash_len-1] = '\0';
+    geohash[hash_len] = '\0';
 
     switch (dir[0]) {
         case 'w':
@@ -341,7 +341,9 @@ erl_geohash_neighbor(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return make_error(env, "alloc_error");
     }
 
-    geohash_neighbor(geohash, dir_val, hash_len, (char *) output.data);
+    geohash_neighbor(geohash, dir_val, hash_len);
+    
+    memcpy(output.data, geohash, hash_len);
 
     return make_ok(env, enif_make_binary(env, &output));
 }
