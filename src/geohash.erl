@@ -55,14 +55,14 @@ neighbor(_GeoHash, _Direction) ->
 %% @doc Calculate 8 neighboring geohashes
 -spec neighbors(binary()) -> [binary()].
 neighbors(C) ->
-    N = neighbor(C, u),
-    W = neighbor(C, l),
-    S = neighbor(C, d),
-    E = neighbor(C, r),
-    NW = neighbor(N, l),
-    NE = neighbor(N, r),
-    SW = neighbor(S, l),
-    SE = neighbor(S, r),
+    {ok, N} = neighbor(C, n),
+    {ok, W} = neighbor(C, w),
+    {ok, S} = neighbor(C, s),
+    {ok, E} = neighbor(C, e),
+    {ok, NW} = neighbor(N, w),
+    {ok, NE} = neighbor(N, e),
+    {ok, SW} = neighbor(S, w),
+    {ok, SE} = neighbor(S, e),
     [N, W, S, E, NW, NE, SW, SE].
 
 %% @doc Expand a geohash to give a list of itself and 8 neighboring geohashes
@@ -74,7 +74,7 @@ expand(C) ->
 -spec nearby(float(), float(), float()) -> [binary()].
 nearby(Lat, Lon, Rad) ->
     Precision = nearby_precision(Lat, Lon, Rad),
-    GeoHash = encode(Lat, Lon, Precision),
+    {ok, GeoHash} = encode(Lat, Lon, Precision),
     expand(GeoHash).
 
 %% @private
@@ -103,7 +103,7 @@ nearby_precision(Lat, Lon, Rad) ->
     DeltaLat = MaxLat - MinLat,
     DeltaLon = MaxLon - MinLon,
     Bits = geohash_bits(DeltaLat, DeltaLon, 63),
-    Bits/5.
+    trunc(Bits/5).
 
 %% @doc Determine the bounding box of coordinates for a point and radius
 %% distance on the earth.
