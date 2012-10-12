@@ -103,7 +103,7 @@ nearby_precision(Lat, Lon, Rad) ->
     DeltaLat = MaxLat - MinLat,
     DeltaLon = MaxLon - MinLon,
     Bits = geohash_bits(DeltaLat, DeltaLon, 63),
-    math:max(trunc(Bits/5), 0).
+    max(trunc(Bits/5), 0).
 
 %% @doc Determine the bounding box of coordinates for a point and radius
 %% distance on the earth.
