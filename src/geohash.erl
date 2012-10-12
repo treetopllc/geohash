@@ -140,8 +140,8 @@ earth_bounding_box(Lat, Lon, Dist)  ->
             {degrees(MinLat), degrees(MinLon0),
                 degrees(MaxLat), degrees(MaxLon0)};
         false ->
-            MinLat0 = math:max(MinLat, MIN_LAT),
-            MaxLat0 = math:min(MaxLat, MAX_LAT),
+            MinLat0 = max(MinLat, MIN_LAT),
+            MaxLat0 = min(MaxLat, MAX_LAT),
             {degrees(MinLat0), degrees(MIN_LON),
                 degrees(MaxLat0), degrees(MAX_LON)}
     end.
