@@ -275,6 +275,10 @@ erl_geohash_encode(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
         return enif_make_badarg(env);
     }
 
+    if(precision >= GEOHASH_MAX || precision < 1) {
+        return make_error(env, "precision_range");
+    }
+
     if(!enif_alloc_binary(precision, &bin)) {
         return make_error(env, "alloc_error");
     }

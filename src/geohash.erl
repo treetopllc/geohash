@@ -55,6 +55,7 @@ neighbor(_GeoHash, _Direction) ->
 %% @doc Calculate 8 neighboring geohashes
 -spec neighbors(binary()) -> [binary()].
 neighbors(C) ->
+    error_logger:info_msg("Computing geohash neighbors for ~p~n", [C]),
     {ok, N} = neighbor(C, n),
     {ok, W} = neighbor(C, w),
     {ok, S} = neighbor(C, s),
@@ -74,6 +75,7 @@ expand(C) ->
 -spec nearby(float(), float(), float()) -> [binary()].
 nearby(Lat, Lon, Rad) ->
     Precision = nearby_precision(Lat, Lon, Rad),
+    error_logger:info_msg("encoding ~p,~p with precision ~p~n", [Lat, Lon, Precision]),
     {ok, GeoHash} = encode(Lat, Lon, Precision),
     expand(GeoHash).
 
