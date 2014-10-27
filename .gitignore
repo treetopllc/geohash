@@ -8,3 +8,5 @@ doc/edoc-info
 ebin
 logs
 test/*.beam
+c_src/*.o
+priv/*.so
