@@ -119,7 +119,7 @@ earth_bounding_box(Lat, Lon, Dist)  ->
     Lat0 = radians(Lat),
     Lon0 = radians(Lon),
     MinLat = Lat0 - AngularDist,
-    MaxLat = Lat0 - AngularDist,
+    MaxLat = Lat0 + AngularDist,
     case (MinLat > MIN_LAT) and (MaxLat < MAX_LAT) of
         true ->
             DeltaLon = math:asin(math:sin(AngularDist) / math:cos(Lat0)),
