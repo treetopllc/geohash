@@ -210,7 +210,7 @@ erl_geohash_decode_bbox(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     len = min(input.size, GEOHASH_MAX);
     strncpy(geohash, (char*)input.data, len);
-    geohash[len-1] = '\0';
+    geohash[len] = '\0';
 
     geohash_decode_bbox(geohash, lat, lon);
 
@@ -242,7 +242,7 @@ erl_geohash_decode(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     len = min(input.size, GEOHASH_MAX);
     strncpy(geohash, (char*)input.data, len);
-    geohash[len-1] = '\0';
+    geohash[len] = '\0';
     geohash_decode(geohash, point);
 
     ERL_NIF_TERM point_tuple = enif_make_tuple2(env,
