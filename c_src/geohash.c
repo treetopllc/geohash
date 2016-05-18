@@ -325,10 +325,10 @@ erl_geohash_neighbor(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     geohash[hash_len] = '\0';
 
     switch (dir[0]) {
-        case 'w':
+        case 'e':
             dir_val = 0;
             break;
-        case 'e':
+        case 'w':
             dir_val = 1;
             break;
         case 'n':
