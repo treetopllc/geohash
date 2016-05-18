@@ -155,7 +155,7 @@ geohash_neighbor(char *str, int dir, int hashlen)
     neighbor = neighbors[index];
     border = borders[index];
     last_chr = str[hashlen-1];
-    if (strchr(border,last_chr))
+    if (strchr(border,last_chr) && (hashlen > 1))
         geohash_neighbor(str, dir, hashlen-1);
     str[hashlen-1] = BASE32[strchr(neighbor, last_chr)-neighbor];
 }
