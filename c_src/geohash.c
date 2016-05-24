@@ -155,7 +155,7 @@ geohash_neighbor(char *str, int dir, int hashlen)
     neighbor = neighbors[index];
     border = borders[index];
     last_chr = str[hashlen-1];
-    if (strchr(border,last_chr))
+    if (strchr(border,last_chr) && (hashlen > 1))
         geohash_neighbor(str, dir, hashlen-1);
     str[hashlen-1] = BASE32[strchr(neighbor, last_chr)-neighbor];
 }
@@ -210,7 +210,7 @@ erl_geohash_decode_bbox(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     len = min(input.size, GEOHASH_MAX);
     strncpy(geohash, (char*)input.data, len);
-    geohash[len-1] = '\0';
+    geohash[len] = '\0';
 
     geohash_decode_bbox(geohash, lat, lon);
 
@@ -242,7 +242,7 @@ erl_geohash_decode(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 
     len = min(input.size, GEOHASH_MAX);
     strncpy(geohash, (char*)input.data, len);
-    geohash[len-1] = '\0';
+    geohash[len] = '\0';
     geohash_decode(geohash, point);
 
     ERL_NIF_TERM point_tuple = enif_make_tuple2(env,
@@ -325,10 +325,10 @@ erl_geohash_neighbor(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
     geohash[hash_len] = '\0';
 
     switch (dir[0]) {
-        case 'w':
+        case 'e':
             dir_val = 0;
             break;
-        case 'e':
+        case 'w':
             dir_val = 1;
             break;
         case 'n':
